@@ -419,7 +419,7 @@ const dmPsych = (function() {
             if (winArray.length == 0) {
               winArray = makeFeedbackArray();
             };             
-            if (tokenArray_miss.length == 0) {
+            if (tokenArray_hit.length == 0) {
               tokenArray_hit = makeTokenArray_hit();
             };  
           };
@@ -1505,42 +1505,7 @@ const dmPsych = (function() {
           ];
       };
 
-      if (gameType == 'bern') {
-          html = [
-              `<div class='parent'>
-                <p>In the ${gameName}, your goal is to achieve successes.</p>
-              </div>`,
-
-              `<div class='parent'>
-                <p>To achieve a success, you must activate the tile grey tile below.</p>
-                <div class='box' style='background-color:gray'></div>
-              </div>`,
-
-              `<div class='parent'>
-                <p>The tile will appear on your screen, then quickly disappear. To activate it, you must press your SPACEBAR 
-                before it disappears; whenever you see the tile, you should press your SPACEBAR as fast as possible.</p>
-                <div class='box' style='background-color:gray'></div>
-              </div>`,
-
-              `<div class='parent'>
-                <p>If you activate the tile, it will turn ${color}.</p>
-                <div class='box' style='background-color:${hex}'></div>
-              </div>`,
-
-              `<div class='parent'>
-                <p>If you respond too slowly, the tile will disappear without being activated.</p>
-                <div class='box' style='background-color:white'></div>
-              </div>`,
-
-              `<div class='parent'>
-                <p>To get a feel for the ${gameName}, you'll complete a practice session.</p>
-                <p>Remember: Your goal is to achieve successes by activating the tile.</p>
-                <p>Once you proceed, the practice session will start, so get ready to press your SPACEBAR.</p>
-              </div>`
-          ];
-      };
-
-      if (gameType == 'bern-mod') {
+      if (gameType == 'bern' | gameType == 'bern-mod') {
           html = [
               `<div class='parent'>
                 <p>In the ${gameName}, your goal is to achieve successes.</p>
@@ -1610,7 +1575,7 @@ const dmPsych = (function() {
         const tokensPerHit = (gameType == 'strk') ? '10 tokens' : '1 token';
         const tokensPerStreak = (gameType == 'strk') ? '30 tokens' : '3 tokens';
         const rewardText = (gameType == 'strk') ? '30 Tokens' : '3 Tokens';
-        
+
         if (round == 1) {
         const fasterOrSlower = (pM < .5) ? "you'll have to respond faster than you did" : (pM > .5) ? "you won't have to respond as fast as you did" : "you'll have to respond just as fast as you did";
           const speed = (pM < .5) ? "less" : (pM > .5) ? "more" : "the same amount of";
@@ -1826,19 +1791,20 @@ const dmPsych = (function() {
                   </div>`,
 
                   `<div class='parent'>
-                    <p>In the ${gameName_1}, you'll earn tokens for <b>every tile you activate</b>.</p>
-                    <p>Specifically, for every tile you activate, you'll earn 10 tokens.</p>
-                    <p>You'll earn 0 tokens for every tile you miss.</p>
+                    <p>In the ${gameName_1}, you'll earn tokens <b>after each tile</b>.</p>
+                    <p>For every tile you activate, you'll earn 7, 8, 9, or 10 tokens.</p>
+                    <p>For every tile you miss, you'll earn 2, 3, 4, or 5 tokens.</p>
+                    <p>(The specific number of tokens for each activation or miss is randomly determined).</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see this message indicating that you earned 10 tokens.</p>                
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, or 10 tokens. For example:</p>                
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see this message indicating that you earned 0 tokens.</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile, you'll see this message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>
+                    <div class="token-text-lose">+2 Tokens</div>
                   </div>`,
 
                   `<div class='parent'>
@@ -1847,26 +1813,26 @@ const dmPsych = (function() {
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile and win 5 extra tokens, you'll see this message:</p>
+                    <p>If you activate a tile and win 5 extra tokens, you'll see a message like this:</p>
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile and lose 5 tokens, you'll see this message:</p>
+                    <p>If you activate a tile and lose 5 tokens, you'll see a message like this:</p>
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile and win 5 extra tokens, you'll see a message like this:</p>
+                    <div class="token-text-lose">+2 Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile and lose 5 tokens, you'll see a message like this:</p>
+                    <div class="token-text-lose">+2 Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
@@ -1877,18 +1843,23 @@ const dmPsych = (function() {
         } else if (round == 2) {
           html = [`<div class='parent' style='text-align: left'>
                     <p>The ${gameName_2} is identical to the ${gameName_1} with one exception:</p>
-                    <p>Instead of earning tokens for streaks, you'll earn tokens for <b>each individual tile you activate</b>.</p>
-                    <p>Specifically, for each individual tile you activate, you'll win 10 tokens.</p>
+                    <p>Instead of earning tokens for streaks, you'll earn tokens after <b>each individual tile</b>.</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see this message indicating that you earned 10 tokens.</p>                
+                    <p>For every tile you activate, you'll earn 7, 8, 9, or 10 tokens.</p>
+                    <p>For every tile you miss, you'll earn 2, 3, 4, or 5 tokens.</p>
+                    <p>(The specific number of tokens for each activation or miss is randomly determined).</p>
+                  </div>`,
+
+                  `<div class='parent' style='height: 550px'>
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, or 10 tokens. For example:</p>                
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see this message indicating that you earned 0 tokens.</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>                
+                    <div class="token-text-lose">+2 Tokens</div>
                   </div>`,
 
                   `<div class='parent'>
@@ -1896,26 +1867,26 @@ const dmPsych = (function() {
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile and win 5 extra tokens, you'll see this message:</p>
+                    <p>If you activate a tile and win 5 extra tokens, you'll see a message like this:</p>
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile and lose 5 tokens, you'll see this message:</p>
+                    <p>If you activate a tile and lose 5 tokens, you'll see a message like this:</p>
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile and win 5 extra tokens, you'll see a message like this:</p>
+                    <div class="token-text-lose">+2 Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile and lose 5 tokens, you'll see a message like this:</p>
+                    <div class="token-text-lose">+2 Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`];
         };

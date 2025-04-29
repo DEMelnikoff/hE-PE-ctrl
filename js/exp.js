@@ -8,6 +8,8 @@ var exp = (function() {
     const bernoulliVersion = ['bern', 'bern-mod'][Math.floor(Math.random()*2)];
     const geomVersion = ['strk', 'strk-mod'][Math.floor(Math.random()*2)];
 
+    console.log(bernoulliVersion, geomVersion)
+
     const settings = {
         pM: .7,
         pM_practice: .5,
