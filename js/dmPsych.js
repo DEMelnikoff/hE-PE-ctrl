@@ -1803,7 +1803,7 @@ const dmPsych = (function() {
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see this message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>
+                    <p>If you miss a tile, you'll see a message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>
                     <div class="token-text-lose">+2 Tokens</div>
                   </div>`,
 
