@@ -246,11 +246,11 @@ const dmPsych = (function() {
     };
 
     const makeTokenArray_miss = function() {
-      return jsPsych.randomization.repeat([2, 3, 4, 5], 1);
+      return jsPsych.randomization.repeat([1, 2, 3, 4, 5], 1);
     };
 
     const makeTokenArray_hit = function() {
-      return jsPsych.randomization.repeat([7, 8, 9, 10], 1);
+      return jsPsych.randomization.repeat([7, 8, 9, 10, 11], 1);
     };
 
     const latency = dmPsych.makeRT(nTrials, pM, roundLength, gameType);
@@ -537,22 +537,13 @@ const dmPsych = (function() {
   // make n-dimensional array of RTs given p(hit) = p
   obj.makeRT = function(nTrials, pWin, roundLength, gameType) {
 
-    const nChunks = Math.round(nTrials / 10);
-    const nWinsPerChunk = Math.round(10 * pWin);
-    const nLossPerChunk = Math.round(10 * (1 - pWin));
+    const nWins = Math.round(nTrials * pWin);
+    const nLoss = Math.round(nTrials - nWins);
 
     let rtArray = [];
 
-    for (let i = 0; i < 4; i++) {
-      let winArray = Array(nWinsPerChunk).fill(750);
-      let lossArray = Array(nLossPerChunk).fill(200);
-      let concatArray = winArray.concat(lossArray);
-      let shuffledArray = jsPsych.randomization.repeat(concatArray, 1);
-      rtArray.push(...shuffledArray);
-    };
-
-    let winArray = Array(nWinsPerChunk).fill(750);
-    let lossArray = Array(nLossPerChunk - 1).fill(200);
+    let winArray = Array(nWins).fill(750);
+    let lossArray = Array(nLoss - 1).fill(200);
     let concatArray = winArray.concat(lossArray);
     let shuffledArray = jsPsych.randomization.repeat(concatArray, 1);
     shuffledArray.push(200);
@@ -1792,18 +1783,18 @@ const dmPsych = (function() {
 
                   `<div class='parent'>
                     <p>In the ${gameName_1}, you'll earn tokens <b>after each tile</b>.</p>
-                    <p>For every tile you activate, you'll earn 7, 8, 9, or 10 tokens.</p>
-                    <p>For every tile you miss, you'll earn 2, 3, 4, or 5 tokens.</p>
+                    <p>For every tile you activate, you'll earn between 7 and 11 tokens.</p>
+                    <p>For every tile you miss, you'll earn between 1 and 5 tokens.</p>
                     <p>(The specific number of tokens for each activation or miss is randomly determined).</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, or 10 tokens. For example:</p>                
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, 10, or 11 tokens. For example:</p>                
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see a message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>
+                    <p>If you miss a tile, you'll see a message indicating whether you earned 1, 2, 3, 4, or 5 tokens. For example:</p>
                     <div class="token-text-lose">+2 Tokens</div>
                   </div>`,
 
@@ -1847,18 +1838,18 @@ const dmPsych = (function() {
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>For every tile you activate, you'll earn 7, 8, 9, or 10 tokens.</p>
-                    <p>For every tile you miss, you'll earn 2, 3, 4, or 5 tokens.</p>
+                    <p>For every tile you activate, you'll earn between 7 and 11 tokens.</p>
+                    <p>For every tile you miss, you'll earn 1 and 5 tokens.</p>
                     <p>(The specific number of tokens for each activation or miss is randomly determined).</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, or 10 tokens. For example:</p>                
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 7, 8, 9, 10, or 11 tokens. For example:</p>                
                     <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see a message indicating whether you earned 2, 3, 4, or 5 tokens. For example:</p>                
+                    <p>If you activate a tile, you'll see a message indicating whether you earned 1, 2, 3, 4, or 5 tokens. For example:</p>                
                     <div class="token-text-lose">+2 Tokens</div>
                   </div>`,
 

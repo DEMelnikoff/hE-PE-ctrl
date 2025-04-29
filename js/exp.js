@@ -8,13 +8,11 @@ var exp = (function() {
     const bernoulliVersion = ['bern', 'bern-mod'][Math.floor(Math.random()*2)];
     const geomVersion = ['strk', 'strk-mod'][Math.floor(Math.random()*2)];
 
-    console.log(bernoulliVersion, geomVersion)
-
     const settings = {
-        pM: .7,
+        pM: .75,
         pM_practice: .5,
         gameType: [[`${bernoulliVersion}`, `${geomVersion}`], [`${geomVersion}`, `${bernoulliVersion}`]][Math.floor(Math.random()*2)],
-        nTrials: 50,
+        nTrials: 48,
         basePay: 2.40,
         roundLength: 6,
         hex_1: ['#00aa00', '#1067e8'][colorOrder],
@@ -419,7 +417,7 @@ var exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "uo7oOCLuoiUY",
+        experiment_id: "Yk1DJ1IleBvM",
         filename: dmPsych.filename,
         data_string: ()=>jsPsych.data.get().csv()
     };
