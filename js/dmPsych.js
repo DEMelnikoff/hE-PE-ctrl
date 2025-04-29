@@ -1778,7 +1778,7 @@ const dmPsych = (function() {
         };
       };
 
-      if (gameType == 'bern') {
+      if (gameType == 'bern-mod') {
         const fasterOrSlower = (pM < .5) ? "you'll have to respond faster than you did" : (pM > .5) ? "you won't have to respond as fast as you did" : "you'll have to respond just as fast as you did";
         const speed = (pM < .5) ? "less" : (pM > .5) ? "more" : "the same amount of";
         const asIn = (pM == .5) ? "as in" : "compared to";
@@ -1892,7 +1892,7 @@ const dmPsych = (function() {
         };
       };  
 
-      if (gameType == 'bern-mod') {
+      if (gameType == 'bern') {
         const fasterOrSlower = (pM < .5) ? "you'll have to respond faster than you did" : (pM > .5) ? "you won't have to respond as fast as you did" : "you'll have to respond just as fast as you did";
         const speed = (pM < .5) ? "less" : (pM > .5) ? "more" : "the same amount of";
         const asIn = (pM == .5) ? "as in" : "compared to";
