@@ -5,13 +5,12 @@ var exp = (function() {
     // randomly assign to conditions and save settings
     const colorOrder = Math.floor(Math.random() * 2);
 
-    const bernoulliVersion = ['bern', 'bern-mod'][Math.floor(Math.random()*2)];
-    const geomVersion = ['strk', 'strk-mod'][Math.floor(Math.random()*2)];
+    const bernoulliVersion = ['bern', 'bern-mod-HE', 'bern-mod-PE'][Math.floor(Math.random()*3)];
 
     const settings = {
         pM: .75,
         pM_practice: .5,
-        gameType: [[`${bernoulliVersion}`, `${geomVersion}`], [`${geomVersion}`, `${bernoulliVersion}`]][Math.floor(Math.random()*2)],
+        gameType: [[`${bernoulliVersion}`, 'strk'], ['strk', `${bernoulliVersion}`]][Math.floor(Math.random()*2)],
         nTrials: 48,
         basePay: 2.40,
         roundLength: 6,
@@ -23,6 +22,7 @@ var exp = (function() {
         color_2: ['<span style="color: #00aa00; font-weight: bold">green</span>', '<span style="color: #1067e8; font-weight: bold">blue</span>'][1 - colorOrder],
     };
 
+    console.log(settings.gameType)
 
     settings.tileHit_1 = `<div class="outcome-container">
                             <div class="header">{header}</div>
@@ -74,7 +74,7 @@ var exp = (function() {
             a2 = 'You will increase your odds of winning a $100.00 bonus prize.';
         };
 
-        if (gameType == 'strk' | gameType == 'strk-mod') {
+        if (gameType == 'strk') {
             // attention check #1
             a1 = 'Earn as many tokens as possible.';
             a2 = 'By building streaks.';
@@ -88,7 +88,7 @@ var exp = (function() {
             a3 = (pM < .5) ? 'Compared to practice, I will have less time to respond.' : (pM > .5) ? 'Compared to practice, I will have more time to respond.' : 'None of the above.';
         };
 
-        if (gameType == 'bern' | gameType == 'bern-mod') {
+        if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
             // attention check #1
             a1 = 'Earn as many tokens as possible.';
             a2 = 'By activating each individual tile.';
@@ -417,7 +417,7 @@ var exp = (function() {
     p.save_data = {
         type: jsPsychPipe,
         action: "save",
-        experiment_id: "Yk1DJ1IleBvM",
+        experiment_id: "D5bjZynalRzb",
         filename: dmPsych.filename,
         data_string: ()=>jsPsych.data.get().csv()
     };

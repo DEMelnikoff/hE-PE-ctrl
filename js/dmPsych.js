@@ -188,9 +188,13 @@ const dmPsych = (function() {
 
     let losses = 0, round = 1, streak = 0, trialNumber = 0, tooSlow = null, tooFast = null, totalTokens = 0, message;
 
-    const winFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Success!" : "+10 Tokens";
+    const bernTokens_hit = (gameType == 'bern-mod-PE') ? 15 : 10;
 
-    const lossFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Miss!" : "+0 Tokens";
+    const bernTokens_miss = (gameType == 'bern-mod-PE') ? -15 : 0;
+
+    const winFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Success!" : `+${bernTokens_hit} Tokens`;
+
+    const lossFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Miss!" :  `${bernTokens_miss} Tokens`;
 
     const tokens_html = `<div class="outcome-container">
                           <div class="header-win" style="color:${hex}">{header}</div>
@@ -272,10 +276,7 @@ const dmPsych = (function() {
         if (gameType == 'strk' | gameType == "strk-mod") {
             return `<div style='font-size:35px'><p>Get ready!</p></div>`;
         };
-        if (gameType == 'bern') {
-            return `<div style='font-size:35px'><p>Get ready!</p></div>`;
-        };
-        if (gameType == 'bern-mod') {
+        if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
             return `<div style='font-size:35px'><p>Get ready!</p></div>`;
         };
       },
@@ -366,12 +367,12 @@ const dmPsych = (function() {
       type: jsPsychHtmlKeyboardResponse,
       data: {phase: `feedback`, block: blockName, round: roundNum},
       stimulus: () => {
-        if (gameType == 'bern') {
+        if (gameType == 'bern' | gameType == 'bern-mod-PE') {
           if (tooSlow) {
             let feedbackType = lossArray.pop();
             message = (feedbackType == "plus" && blockName !== "practice") ? noTokens_bonus_html : (feedbackType == "minus" && blockName !== "practice") ? noTokens_loss_html : noTokens_html;
             if (blockName !== "practice") {
-              (feedbackType == "plus") ? totalTokens += 5 : (feedbackType == "minus") ? totalTokens -= 5 : totalTokens += 0;
+              (feedbackType == "plus") ? totalTokens += (bernTokens_miss + 5) : (feedbackType == "minus") ? totalTokens += (bernTokens_miss - 5) : totalTokens += bernTokens_miss;
             };            
             round++;
             if (lossArray.length == 0) {
@@ -381,7 +382,7 @@ const dmPsych = (function() {
             let feedbackType = winArray.pop();
             message = (feedbackType == "plus" && blockName !== "practice") ? tokens_bonus_html : (feedbackType == "minus" && blockName !== "practice") ? tokens_loss_html : tokens_html;
             if (blockName !== "practice") {
-              (feedbackType == "plus") ? totalTokens += 15 : (feedbackType == "minus") ? totalTokens += 5 : totalTokens += 10;
+              (feedbackType == "plus") ? totalTokens += (bernTokens_hit + 5) : (feedbackType == "minus") ? totalTokens += (bernTokens_hit - 5) : totalTokens += bernTokens_hit;
             };               
             round++;
             if (winArray.length == 0) {
@@ -391,12 +392,13 @@ const dmPsych = (function() {
           return message.replace('{header}', '');
         }; 
 
-        if (gameType == 'bern-mod') {
+        if (gameType == 'bern-mod-HE') {
           if (tooSlow) {
             let feedbackType = lossArray.pop();
             let nTokens = tokenArray_miss.pop();
+            console.log(nTokens);
             message = (feedbackType == "plus" && blockName !== "practice") ? noTokens_bonus_html : (feedbackType == "minus" && blockName !== "practice") ? noTokens_loss_html : noTokens_html;
-            message = message.replace("+0 Tokens", `+${nTokens} Tokens`);
+            message = message.replace("0 Tokens", `+${nTokens} Tokens`);
             if (blockName !== "practice") {
               (feedbackType == "plus") ? totalTokens += (nTokens + 5) : (feedbackType == "minus") ? totalTokens += (nTokens - 5) : totalTokens += nTokens;
             };            
@@ -537,17 +539,27 @@ const dmPsych = (function() {
   // make n-dimensional array of RTs given p(hit) = p
   obj.makeRT = function(nTrials, pWin, roundLength, gameType) {
 
-    const nWins = Math.round(nTrials * pWin);
-    const nLoss = Math.round(nTrials - nWins);
+    const nTrialPerHalf = nTrials / 2;
+    const nWinsPerHalf = Math.round(nTrialPerHalf * pWin);
+    const nLossPerHalf = Math.round(nTrialPerHalf - nWinsPerHalf);
 
     let rtArray = [];
 
-    let winArray = Array(nWins).fill(750);
-    let lossArray = Array(nLoss - 1).fill(200);
-    let concatArray = winArray.concat(lossArray);
-    let shuffledArray = jsPsych.randomization.repeat(concatArray, 1);
-    shuffledArray.push(200);
-    rtArray.push(...shuffledArray);
+    // first half
+    let winArray1 = Array(nWinsPerHalf).fill(750);
+    let lossArray1 = Array(nLossPerHalf).fill(200);
+    let concatArray1 = winArray1.concat(lossArray1);
+    let shuffledArray1 = jsPsych.randomization.repeat(concatArray1, 1);
+    rtArray.push(...shuffledArray1);
+
+    // second half
+    let winArray2 = Array(nWinsPerHalf).fill(750);
+    let lossArray2 = Array(nLossPerHalf - 1).fill(200);
+    let concatArray2 = winArray2.concat(lossArray2);
+    let shuffledArray2 = jsPsych.randomization.repeat(concatArray2, 1);
+    shuffledArray2.push(200);
+    rtArray.push(...shuffledArray2);
+
     return rtArray;
 
   };
@@ -1496,7 +1508,7 @@ const dmPsych = (function() {
           ];
       };
 
-      if (gameType == 'bern' | gameType == 'bern-mod') {
+      if (gameType == 'bern' | gameType == 'bern-mod-HE' | gameType == 'bern-mod-PE') {
           html = [
               `<div class='parent'>
                 <p>In the ${gameName}, your goal is to achieve successes.</p>
@@ -1769,7 +1781,7 @@ const dmPsych = (function() {
         };
       };
 
-      if (gameType == 'bern-mod') {
+      if (gameType == 'bern-mod-HE') {
         const fasterOrSlower = (pM < .5) ? "you'll have to respond faster than you did" : (pM > .5) ? "you won't have to respond as fast as you did" : "you'll have to respond just as fast as you did";
         const speed = (pM < .5) ? "less" : (pM > .5) ? "more" : "the same amount of";
         const asIn = (pM == .5) ? "as in" : "compared to";
@@ -1883,10 +1895,15 @@ const dmPsych = (function() {
         };
       };  
 
-      if (gameType == 'bern') {
+      if (gameType == 'bern' | gameType == 'bern-mod-PE') {
         const fasterOrSlower = (pM < .5) ? "you'll have to respond faster than you did" : (pM > .5) ? "you won't have to respond as fast as you did" : "you'll have to respond just as fast as you did";
         const speed = (pM < .5) ? "less" : (pM > .5) ? "more" : "the same amount of";
         const asIn = (pM == .5) ? "as in" : "compared to";
+        const bernTokens_hit = (gameType == 'bern-mod-PE') ? '15' : '10';
+        const bernTokens_miss = (gameType == 'bern-mod-PE') ? '15' : '0';
+        const earnOrLose = (gameType == 'bern-mod-PE') ? 'lose' : 'earn';
+        const earnedOrLost = (gameType == 'bern-mod-PE') ? 'lost' : 'earned';
+        const signedOutcome = (gameType == 'bern-mod-PE') ? '-15' : '+0';
 
         if (round == 1) {
           html = [`<div class='parent'>
@@ -1897,18 +1914,18 @@ const dmPsych = (function() {
 
                   `<div class='parent'>
                     <p>In the ${gameName_1}, you'll earn tokens for <b>every tile you activate</b>.</p>
-                    <p>Specifically, for every tile you activate, you'll earn 10 tokens.</p>
-                    <p>You'll earn 0 tokens for every tile you miss.</p>
+                    <p>Specifically, for every tile you activate, you'll earn ${bernTokens_hit} tokens.</p>
+                    <p>You'll ${earnOrLose} ${bernTokens_miss} tokens for every tile you miss.</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see this message indicating that you earned 10 tokens.</p>                
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <p>If you activate a tile, you'll see this message indicating that you earned ${bernTokens_hit} tokens.</p>                
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see this message indicating that you earned 0 tokens.</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile, you'll see this message indicating that you ${earnedOrLost} ${bernTokens_miss} tokens.</p>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                   </div>`,
 
                   `<div class='parent'>
@@ -1918,25 +1935,25 @@ const dmPsych = (function() {
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you activate a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you activate a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you miss a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you miss a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
@@ -1948,17 +1965,18 @@ const dmPsych = (function() {
           html = [`<div class='parent' style='text-align: left'>
                     <p>The ${gameName_2} is identical to the ${gameName_1} with one exception:</p>
                     <p>Instead of earning tokens for streaks, you'll earn tokens for <b>each individual tile you activate</b>.</p>
-                    <p>Specifically, for each individual tile you activate, you'll win 10 tokens.</p>
+                    <p>Specifically, for each individual tile you activate, you'll win ${bernTokens_hit} tokens.</p>
+                    <p>You'll ${earnOrLose} ${bernTokens_miss} tokens for every tile you miss.</p>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you activate a tile, you'll see this message indicating that you earned 10 tokens.</p>                
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <p>If you activate a tile, you'll see this message indicating that you earned ${bernTokens_hit} tokens.</p>                
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
-                    <p>If you miss a tile, you'll see this message indicating that you earned 0 tokens.</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <p>If you miss a tile, you'll see this message indicating that you ${earnedOrLost} ${bernTokens_miss} tokens.</p>
+                    <div class="token-text-lose">${signedOutcome}con Tokens</div>
                   </div>`,
 
                   `<div class='parent'>
@@ -1967,25 +1985,25 @@ const dmPsych = (function() {
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you activate a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you activate a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-win" style="color:${hex}">+10 Tokens</div>
+                    <div class="token-text-win" style="color:${hex}">+${bernTokens_hit} Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you miss a tile and win 5 extra tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                     <div class="bonus-text">+5 Bonus</div>
                   </div>`,
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you miss a tile and lose 5 tokens, you'll see this message:</p>
-                    <div class="token-text-lose">+0 Tokens</div>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`];
         };
