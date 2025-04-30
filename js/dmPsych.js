@@ -1691,7 +1691,7 @@ const dmPsych = (function() {
                   `<div class='parent' style='height: 550px'>
                     <p>If you randomly lose 5 tokens after a steak of 3, you'll see this message:</p>
                     <div class="header-win" style="top:20%; color:${hex}">Final Streak: 3</div>               
-                    <div class="token-text-win" style="color:${hex}">${rewardText}</div>
+                    <div class="token-text-win" style="color:${hex}">+${rewardText}</div>
                     <div class="penalty-text">-5 Loss</div>
                   </div>`,
 
