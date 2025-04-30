@@ -192,9 +192,11 @@ const dmPsych = (function() {
 
     const bernTokens_miss = (gameType == 'bern-mod-PE') ? -15 : 0;
 
+    const bernTokens_missText = (gameType == 'bern-mod-PE') ? '-15' : '+0';
+
     const winFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Success!" : `+${bernTokens_hit} Tokens`;
 
-    const lossFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Miss!" :  `${bernTokens_miss} Tokens`;
+    const lossFeedback = (gameType == "strk" | gameType == "strk-mod") ? "{strk-feedback}" : (blockName == "practice") ? "Miss!" :  `${bernTokens_missText} Tokens`;
 
     const tokens_html = `<div class="outcome-container">
                           <div class="header-win" style="color:${hex}">{header}</div>
@@ -396,9 +398,8 @@ const dmPsych = (function() {
           if (tooSlow) {
             let feedbackType = lossArray.pop();
             let nTokens = tokenArray_miss.pop();
-            console.log(nTokens);
             message = (feedbackType == "plus" && blockName !== "practice") ? noTokens_bonus_html : (feedbackType == "minus" && blockName !== "practice") ? noTokens_loss_html : noTokens_html;
-            message = message.replace("0 Tokens", `+${nTokens} Tokens`);
+            message = message.replace("+0 Tokens", `+${nTokens} Tokens`);
             if (blockName !== "practice") {
               (feedbackType == "plus") ? totalTokens += (nTokens + 5) : (feedbackType == "minus") ? totalTokens += (nTokens - 5) : totalTokens += nTokens;
             };            
