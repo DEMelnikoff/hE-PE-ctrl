@@ -1976,7 +1976,7 @@ const dmPsych = (function() {
 
                   `<div class='parent' style='height: 550px'>
                     <p>If you miss a tile, you'll see this message indicating that you ${earnedOrLost} ${bernTokens_miss} tokens.</p>
-                    <div class="token-text-lose">${signedOutcome}con Tokens</div>
+                    <div class="token-text-lose">${signedOutcome} Tokens</div>
                   </div>`,
 
                   `<div class='parent'>
